@@ -1,11 +1,18 @@
 # This file contains modules common to various models
 import math
-from yolov5.models.experimental import FixedHardswish
-
+import torch.nn.functional as F
 import torch
 import torch.nn as nn
 from utils.general import non_max_suppression
 
+
+class FixedHardswish(nn.Hardswish):
+    """Fixes an error thrown when using the naitive nn.HardSwish along with
+    the janky format in which the models in this repo have been saved. See
+    https://github.com/pytorch/pytorch/issues/46971 for more details.
+    """
+    def forward(self, input):
+        return F.hardswish(input)
 
 def autopad(k, p=None):  # kernel, padding
     # Pad to 'same'

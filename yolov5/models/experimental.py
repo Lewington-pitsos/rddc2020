@@ -2,7 +2,6 @@
 
 from yolov5.utils.activations import Hardswish
 import numpy as np
-import torch.functional as F
 import torch
 import torch.nn as nn
 
@@ -90,15 +89,6 @@ class GhostBottleneck(nn.Module):
 
     def forward(self, x):
         return self.conv(x) + self.shortcut(x)
-
-
-class FixedHardswish(nn.Hardswish):
-    """Fixes an error thrown when using the naitive nn.HardSwish along with
-    the janky format in which the models in this repo have been saved. See
-    https://github.com/pytorch/pytorch/issues/46971 for more details.
-    """
-    def forward(self, input):
-        return F.hardswish(input)
 
 class MixConv2d(nn.Module):
     # Mixed Depthwise Conv https://arxiv.org/abs/1907.09595
