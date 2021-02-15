@@ -5,6 +5,7 @@ Usage:
 """
 
 import argparse
+from yolov5.models.experimental import FixedHardswish
 
 import torch
 import torch.nn as nn
@@ -33,7 +34,7 @@ if __name__ == '__main__':
     # Update model
     for k, m in model.named_modules():
         m._non_persistent_buffers_set = set()  # pytorch 1.6.0 compatability
-        if isinstance(m, models.common.Conv) and isinstance(m.act, nn.Hardswish):
+        if isinstance(m, models.common.Conv) and isinstance(m.act, FixedHardswish):
             m.act = Hardswish()  # assign activation
         # if isinstance(m, models.yolo.Detect):
         #     m.forward = m.forward_export  # assign forward (optional)

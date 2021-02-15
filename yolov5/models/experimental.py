@@ -1,6 +1,8 @@
 # This file contains experimental modules
 
+from yolov5.utils.activations import Hardswish
 import numpy as np
+import torch.functional as F
 import torch
 import torch.nn as nn
 
@@ -90,6 +92,14 @@ class GhostBottleneck(nn.Module):
         return self.conv(x) + self.shortcut(x)
 
 
+class FixedHardswish(nn.Hardswish):
+    """Fixes an error thrown when using the naitive nn.HardSwish along with
+    the janky format in which the models in this repo have been saved. See
+    https://github.com/pytorch/pytorch/issues/46971 for more details.
+    """
+    def forward(self, input):
+        return F.hardswish(input)
+
 class MixConv2d(nn.Module):
     # Mixed Depthwise Conv https://arxiv.org/abs/1907.09595
     def __init__(self, c1, c2, k=(1, 3), s=1, equal_ch=True):
@@ -127,7 +137,6 @@ class Ensemble(nn.ModuleList):
         # y = torch.cat(y, 1)  # nms ensemble
         y = torch.stack(y).mean(0)  # mean ensemble
         return y, None  # inference, train output
-
 
 def attempt_load(weights, map_location=None):
     # Loads an ensemble of models weights=[a,b,c] or a single model weights=[a] or weights=a

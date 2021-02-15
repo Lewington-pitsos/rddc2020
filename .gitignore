@@ -5,8 +5,9 @@ yolov5/datasets/road2020/train
 yolov5/runs/*
 !yolov5/runs/.gitignore
 
-
+yolov5/results.csv
 yolov5/inference/old/*
+yolov5/inference/output/*
 !yolov5/inference/old/.gitignore
 
 **/__pycache__/
