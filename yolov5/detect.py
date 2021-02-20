@@ -18,6 +18,39 @@ from utils.general import (
 from utils.torch_utils import select_device, load_classifier, time_synchronized
 
 
+
+pairs = [
+    (1032, 1213),
+    (1246, 1979),
+    (1832, 1978),
+    (2221, 2270),
+    (2717, 2274),
+    (2638, 3511),
+    (3678, 3785),
+    (3848, 3971),
+    (4005, 4006),
+    (4171, 4196),
+    (4406,4663),
+    (4801, 4858),
+    (4862, 4869),
+    (5247, 5248),
+    (5468, 5491),
+    (6570, 6602),
+    (6955, 6121),
+    (7371, 8918),
+    (9282, 9360),
+    (9427, 9558),
+    (9809, 9855),
+    (10611, 10655)
+]
+
+def is_good(num, pairs):
+    for p in pairs:
+        if num >= p[0] and num <= p[1]:
+            return False
+    return True
+    
+
 save_csv = True
 csv_f = open("results.csv","w")
 
@@ -114,8 +147,10 @@ def detect(save_img=False):
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
                         with open(txt_path + '.txt', 'a') as f:
                             f.write(('%g ' * 5 + '\n') % (cls, *xywh))  # label format
-
-                    if save_img or view_img:  # Add bbox to image
+                    
+                    num = int(save_path.split("/")[-1].split("_")[-1].split(".")[0])
+                    print(num)
+                    if is_good(num, pairs) and save_img or view_img:  # Add bbox to image
                         label = '%s %.2f' % (names[int(cls)], conf)
                         plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=3)
 
@@ -136,6 +171,7 @@ def detect(save_img=False):
             if save_img:
                 if dataset.mode == 'images':
                     cv2.imwrite(save_path, im0)
+
                 else:
                     if vid_path != save_path:  # new video
                         vid_path = save_path
